@@ -3,6 +3,7 @@ package ts3sqlib
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"log"
 	"net"
@@ -78,7 +79,6 @@ func (s *Ts3sqs) Close() {
 }
 
 func (s *Ts3sqs) send(msg string) error {
-	s.log.Printf("sending: '%s'", strings.TrimSpace(msg))
 	length, err := s.serverconn.Write([]byte(msg))
 	if err == nil && length < len(msg) {
 		return fmt.Errorf("only %d of %d bytes were sended.", length, len(msg))
@@ -87,14 +87,47 @@ func (s *Ts3sqs) send(msg string) error {
 	}
 }
 
+func r2s(runes ...byte) []byte {
+	return []byte(runes)
+}
+
+type escapeSequence struct {
+	ascii  []byte
+	escape []byte
+}
+
+var escapeSeq [10]escapeSequence = [...]escapeSequence{
+	{r2s(92), r2s(92, 92)},
+	{r2s(47), r2s(92, 47)},
+	{r2s(32), r2s(92, 115)},
+	{r2s(124), r2s(92, 112)},
+	{r2s(7), r2s(92, 97)},
+	{r2s(8), r2s(92, 98)},
+	{r2s(12), r2s(92, 102)},
+	{r2s(10), r2s(92, 110)},
+	{r2s(13), r2s(92, 114)},
+	{r2s(9), r2s(92, 116)},
+}
+
 func escape(s string) string {
-	//escape replaces all spaces with \s
-	return strings.Replace(s, " ", "\\s", -1)
+	for i := range escapeSeq {
+		s = string(bytes.Replace([]byte(s), escapeSeq[i].ascii, escapeSeq[i].escape, -1))
+	}
+	return s
 }
 
 func unescape(s string) string {
-	//unescape replaces all \s with spaces
-	return strings.Replace(s, "\\s", " ", -1)
+	//for i := range escapeSeq {
+	for i := 1; i < len(escapeSeq); i++ {
+		s = string(bytes.Replace([]byte(s), escapeSeq[i].escape, escapeSeq[i].ascii, -1))
+	}
+	//s = string(bytes.Replace([]byte(s), r2s(92, 92), []byte("\\"), -1))
+	return s
+	/*s, err := strconv.Unquote(s)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return s*/
 }
 
 func (s *Ts3sqs) WaitForMessageLine() (string, error) {
