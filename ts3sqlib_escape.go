@@ -27,7 +27,6 @@ var (
 
 //Escape escapes a given string as described in the ts3 server query manual.
 func Escape(msg string) string {
-	//TODO escape the msg
 	bytemsg := []byte(msg)
 
 	for i := range escapechars {
@@ -40,7 +39,6 @@ func Escape(msg string) string {
 //Unescape unescapes a given escaped string as described in the ts3 server
 //query manual.
 func Unescape(escaped_msg string) string {
-	//TODO unescape a escaped message
 	bytemsg := []byte(escaped_msg)
 
 	for i := range escapechars {
