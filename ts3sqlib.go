@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"strings"
 	"sync"
 )
@@ -69,22 +68,6 @@ func Dial(address string, logger *log.Logger) (conn *SqConn, err error) {
 	conn.WelcomeMsg = <-conn.recvChan
 
 	return
-}
-
-//TODO: remove this function...
-func (c *SqConn) RecvTest() {
-	c.logger = log.New(os.Stderr, "", log.LstdFlags)
-	_, _ = c.Send("use 1\n")
-	/*c.logger.Println(answer)
-	if err != nil {
-		c.logger.Println(err)
-	}*/
-
-	_, _ = c.Send("quit\n")
-
-	_, _ = c.Send("help login\n")
-
-	c.Close()
 }
 
 func (c *SqConn) recv() {
