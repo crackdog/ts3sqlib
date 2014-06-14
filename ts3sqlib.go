@@ -125,6 +125,11 @@ func (c *SqConn) Send(msg string) (answer string, err error) {
 	c.sendMutex.Lock()
 	defer c.sendMutex.Unlock()
 
+	//msg must have a newline at the end
+	if !strings.HasSuffix(msg, "\n") {
+		msg += "\n"
+	}
+
 	if !c.receiving {
 		answer = ""
 		err = fmt.Errorf("connection closed")
