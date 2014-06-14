@@ -8,6 +8,7 @@ import (
 
 var (
 	MsgEndError       = NewError(0, "ok", "")
+	ClosedError       = NewError(-1, "connection closed", "")
 	InvalidLoginError = NewError(520, "invalid\\sloginname\\sor\\spassword", "") //TODO: remove the \\s after implementing escape/unescape
 )
 
