@@ -12,7 +12,6 @@ import (
 
 const (
 	stdPort string = ":10011"
-	buflen  int    = 4096
 )
 
 //SqConn contains the connection to a ts3 server.
@@ -43,9 +42,9 @@ func Dial(address string, logger *log.Logger) (conn *SqConn, err error) {
 		return
 	}
 
-	if logger == nil {
+	/*if logger == nil {
 		logger = log.New(os.Stderr, "", log.LstdFlags)
-	}
+	}*/
 
 	conn = &SqConn{
 		conn:       connection,
@@ -72,7 +71,9 @@ func Dial(address string, logger *log.Logger) (conn *SqConn, err error) {
 	return
 }
 
+//TODO: remove this function...
 func (c *SqConn) RecvTest() {
+	c.logger = log.New(os.Stderr, "", log.LstdFlags)
 	_, _ = c.Send("use 1\n")
 	/*c.logger.Println(answer)
 	if err != nil {
@@ -87,14 +88,14 @@ func (c *SqConn) RecvTest() {
 }
 
 func (c *SqConn) recv() {
-	line := ""
 	var err error
+	line := ""
 	scan := bufio.NewScanner(c.conn)
 
 	for c.receiving {
 		//read line
 		if !scan.Scan() {
-			if err != nil {
+			if err = scan.Err(); err != nil && c.logger != nil {
 				c.logger.Print(err)
 			}
 			c.receiving = false
@@ -105,8 +106,10 @@ func (c *SqConn) recv() {
 		line = scan.Text()
 		line = strings.Replace(line, string([]byte{13}), "", -1)
 
-		if err != nil {
-			c.logger.Print(err)
+		if err = scan.Err(); err != nil {
+			if c.logger != nil {
+				c.logger.Print(err)
+			}
 			continue
 		}
 
@@ -145,7 +148,9 @@ func (c *SqConn) Send(msg string) (answer string, err error) {
 		return
 	}
 
-	c.logger.Print("send: ", msg)
+	if c.logger != nil {
+		c.logger.Print("send: ", msg)
+	}
 
 	answer = ""
 
@@ -181,11 +186,13 @@ func (c *SqConn) Send(msg string) (answer string, err error) {
 	}
 
 	//logging
-	if answer != "" && answer != "\n" {
-		c.logger.Println(answer)
-	}
-	if err != nil {
-		c.logger.Println(err)
+	if c.logger != nil {
+		if answer != "" && answer != "\n" {
+			c.logger.Println(answer)
+		}
+		if err != nil {
+			c.logger.Println(err)
+		}
 	}
 
 	return
