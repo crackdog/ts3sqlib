@@ -5,12 +5,18 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strings"
 	"sync"
 )
 
 const (
 	stdPort string = ":10011"
+)
+
+var (
+	//StdoutLogger is the standard logger that prints to stdout.
+	StdoutLogger = log.New(os.Stderr, "", log.LstdFlags)
 )
 
 //SqConn contains the connection to a ts3 server.
@@ -40,10 +46,6 @@ func Dial(address string, logger *log.Logger) (conn *SqConn, err error) {
 	if err != nil {
 		return
 	}
-
-	/*if logger == nil {
-		logger = log.New(os.Stderr, "", log.LstdFlags)
-	}*/
 
 	conn = &SqConn{
 		conn:       connection,
