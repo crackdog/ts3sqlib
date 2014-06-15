@@ -9,7 +9,7 @@ import (
 var (
 	MsgEndError       = NewError(0, "ok", "")
 	ClosedError       = NewError(-1, "connection closed", "")
-	InvalidLoginError = NewError(520, "invalid\\sloginname\\sor\\spassword", "") //TODO: remove the \\s after implementing escape/unescape
+	InvalidLoginError = NewError(520, "invalid loginname or password", "")
 )
 
 //Error contains additional error information.
@@ -70,9 +70,9 @@ func toError(line string) (err Error) {
 					err.Id = 999
 				}
 			case strings.Contains(key, "extra_msg"):
-				err.ExtraMsg = value
+				err.ExtraMsg = Unescape(value)
 			case strings.Contains(key, "msg"):
-				err.Msg = value
+				err.Msg = Unescape(value)
 			}
 		}
 	}
