@@ -30,11 +30,11 @@ func TestEqual(t *testing.T) {
 	line1 := "error id=0 msg=ok\n"
 	line2 := "error id=520 msg=invalid\\sloginname\\sor\\spassword"
 
-	if x := MsgEndError.equals(toError(line1)); !x {
+	if x := MsgEndError.Equals(toError(line1)); !x {
 		t.Errorf("equals error at line1")
 	}
 
-	if x := MsgEndError.equals(toError(line2)); x {
+	if x := MsgEndError.Equals(toError(line2)); x {
 		t.Errorf("equals error at line2")
 	}
 }
