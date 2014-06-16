@@ -33,7 +33,8 @@ func NewError(id int, msg, extramsg string) Error {
 	return Error{id, msg, extramsg}
 }
 
-func (err Error) equals(compareErr error) bool {
+//Equals compares an Error with another Error
+func (err Error) Equals(compareErr error) bool {
 	if err2, ok := compareErr.(Error); ok {
 		return err.ID == err2.ID
 	}

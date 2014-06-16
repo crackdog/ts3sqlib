@@ -171,7 +171,7 @@ func (c *SqConn) Send(msg string) (answer string, err error) {
 		err = NewError(-1, "connection closed", "")
 	}
 
-	if MsgEndError.equals(err) {
+	if MsgEndError.Equals(err) {
 		err = nil
 	}
 
