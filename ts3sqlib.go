@@ -1,3 +1,4 @@
+//Package ts3sqlib provides a simple interface for the TeamSpeak3 ServerQuery.
 package ts3sqlib
 
 import (
