@@ -38,8 +38,8 @@ func Escape(msg string) string {
 
 //Unescape unescapes a given escaped string as described in the ts3 server
 //query manual.
-func Unescape(escaped_msg string) string {
-	bytemsg := []byte(escaped_msg)
+func Unescape(escapedMsg string) string {
+	bytemsg := []byte(escapedMsg)
 
 	for i := range escapechars {
 		bytemsg = bytes.Replace(bytemsg, escapechars[i].b, escapechars[i].a, -1)

@@ -7,21 +7,21 @@ import (
 )
 
 var (
-	MsgEndError       = NewError(0, "ok", "")
-	ClosedError       = NewError(-1, "connection closed", "")
-	InvalidLoginError = NewError(520, "invalid loginname or password", "")
+	MsgEndError       = NewError(0, "ok", "")                              //End of Message
+	ClosedError       = NewError(-1, "connection closed", "")              //Connection Closed
+	InvalidLoginError = NewError(520, "invalid loginname or password", "") //Invalid Login username or password
 )
 
 //Error contains additional error information.
 type Error struct {
-	Id       int
+	ID       int
 	Msg      string
 	ExtraMsg string
 }
 
 //Error returns the error in a string representation.
 func (err Error) Error() string {
-	s := fmt.Sprintf("error id=%d msg=%s", err.Id, err.Msg)
+	s := fmt.Sprintf("error id=%d msg=%s", err.ID, err.Msg)
 	if err.ExtraMsg != "" {
 		s += fmt.Sprintf(" extra_msg=%s", err.ExtraMsg)
 	}
@@ -33,12 +33,11 @@ func NewError(id int, msg, extramsg string) Error {
 	return Error{id, msg, extramsg}
 }
 
-func (e Error) equals(err error) bool {
-	if e2, ok := err.(Error); ok {
-		return e.Id == e2.Id
-	} else {
-		return false
+func (err Error) equals(compareErr error) bool {
+	if err2, ok := compareErr.(Error); ok {
+		return err.ID == err2.ID
 	}
+	return false
 }
 
 //isError tests if a given string is a ts3 server query error
@@ -65,9 +64,9 @@ func toError(line string) (err Error) {
 			switch {
 			case strings.Contains(key, "id"):
 				var err3 error
-				err.Id, err3 = strconv.Atoi(value)
+				err.ID, err3 = strconv.Atoi(value)
 				if err3 != nil {
-					err.Id = 999
+					err.ID = 999
 				}
 			case strings.Contains(key, "extra_msg"):
 				err.ExtraMsg = Unescape(value)
