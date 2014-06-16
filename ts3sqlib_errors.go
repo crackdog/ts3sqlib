@@ -7,11 +7,11 @@ import (
 )
 
 var (
-	//End of Message Error (the normal error message from the ts3 server)
+	//MsgEndError is the normal Error at the end of each message.
 	MsgEndError = NewError(0, "ok", "")
-	//Connection closed Error
+	//ClosedError is the Error of a closed connection.
 	ClosedError = NewError(-1, "connection closed", "")
-	//Invalid Login Error, because of a wrong username or password.
+	//InvalidLoginError is the Error for an invalid loginname or password.
 	InvalidLoginError = NewError(520, "invalid loginname or password", "")
 )
 
