@@ -29,7 +29,7 @@ type SqConn struct {
 	recvNotify chan string
 	recvChan   chan string
 	closed     chan bool
-
+	//WelcomeMsg contains the welcome message from the ts3 server
 	WelcomeMsg string
 }
 
