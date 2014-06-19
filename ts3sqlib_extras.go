@@ -4,8 +4,11 @@ import (
 	"strings"
 )
 
-func (c *SqConn) ClientlistToMaps() (clients []map[string]string, err error) {
-	answer, err := c.Send("clientlist\n")
+//ClientlistToMaps gets the clientlist from the ts3 server and returns it as
+//a slice of maps.
+//The params are described in the TS3 ServerQuery Manual.
+func (c *SqConn) ClientlistToMaps(params string) (clients []map[string]string, err error) {
+	answer, err := c.Send("clientlist " + params + "\n")
 	if err != nil {
 		return
 	}
@@ -15,7 +18,7 @@ func (c *SqConn) ClientlistToMaps() (clients []map[string]string, err error) {
 }
 
 //MsgToMaps converts a given ts3 serverquery answer into a slice of maps,
-//with key-value-pairs with a '='.
+//with key-value-pairs seperated by a '='.
 func MsgToMaps(msg string) (parts []map[string]string, err error) {
 	lines := strings.Split(msg, "|")
 	parts = make([]map[string]string, len(lines))
@@ -29,7 +32,6 @@ func MsgToMaps(msg string) (parts []map[string]string, err error) {
 		for j := range pairs {
 			pair := strings.Split(pairs[j], "=")
 			if len(pair) != 2 {
-				//TODO: maybe add to map...
 				continue
 			}
 			parts[i][pair[0]] = Unescape(pair[1])
