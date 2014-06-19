@@ -4,29 +4,35 @@ import (
 	"strings"
 )
 
-type Stringmap map[string]string
-
-func (c *SqConn) ClientlistToMaps() (clients []Stringmap, err error) {
+func (c *SqConn) ClientlistToMaps() (clients []map[string]string, err error) {
 	answer, err := c.Send("clientlist\n")
 	if err != nil {
 		return
 	}
 
-	tmpclients := strings.Split(answer, "|")
-	clients = make([]Stringmap, len(tmpclients))
+	clients, err = MsgToMaps(answer)
+	return
+}
 
-	for i := range tmpclients {
-		clients[i] = make(map[string]string)
+//MsgToMaps converts a given ts3 serverquery answer into a slice of maps,
+//with key-value-pairs with a '='.
+func MsgToMaps(msg string) (parts []map[string]string, err error) {
+	lines := strings.Split(msg, "|")
+	parts = make([]map[string]string, len(lines))
 
-		tmpclients[i] = strings.Replace(tmpclients[i], "\n", "", -1)
-		pairs := strings.Split(tmpclients[i], " ")
+	for i := range lines {
+		parts[i] = make(map[string]string)
+
+		lines[i] = strings.Replace(lines[i], "\n", "", -1)
+		pairs := strings.Split(lines[i], " ")
 
 		for j := range pairs {
 			pair := strings.Split(pairs[j], "=")
 			if len(pair) != 2 {
+				//TODO: maybe add to map...
 				continue
 			}
-			clients[i][pair[0]] = Unescape(pair[1])
+			parts[i][pair[0]] = Unescape(pair[1])
 		}
 	}
 
