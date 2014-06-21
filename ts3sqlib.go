@@ -17,7 +17,9 @@ const (
 
 var (
 	//StdoutLogger is the standard logger that prints to stdout.
-	StdoutLogger = log.New(os.Stderr, "", log.LstdFlags)
+	StdoutLogger = log.New(os.Stdout, "", log.LstdFlags)
+	//StderrLogger is the standard logger that prints to stderr.
+	StderrLogger = log.New(os.Stderr, "", log.LstdFlags)
 )
 
 //SqConn contains the connection to a ts3 server.
