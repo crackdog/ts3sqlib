@@ -125,8 +125,18 @@ func (c *SqConn) Close() {
 	c.conn.Close()
 }
 
+//IsClosed checks if the connection is closed
+func (c *SqConn) IsClosed() bool {
+	return c.receiving
+}
+
 //Send sends a message to the server and returns the answer and an error.
 func (c *SqConn) Send(msg string) (answer string, err error) {
+	if c == nil {
+		fmt.Errorf("nil pointer error")
+		return
+	}
+
 	c.sendMutex.Lock()
 	defer c.sendMutex.Unlock()
 
