@@ -127,7 +127,7 @@ func (c *SqConn) Close() {
 
 //IsClosed checks if the connection is closed
 func (c *SqConn) IsClosed() bool {
-	return c.receiving
+	return !c.receiving
 }
 
 //Send sends a message to the server and returns the answer and an error.
