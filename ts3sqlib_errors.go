@@ -13,6 +13,8 @@ var (
 	ClosedError = NewError(-1, "connection closed", "")
 	//InvalidLoginError is the Error for an invalid loginname or password.
 	InvalidLoginError = NewError(520, "invalid loginname or password", "")
+	//PermissionError is the Error for a lack of permissions.
+	PermissionError = NewError(27, "insufficient client permissions", "")
 )
 
 //Error contains additional error information.
