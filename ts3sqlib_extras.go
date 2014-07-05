@@ -9,7 +9,7 @@ import (
 type Client struct {
 	Cid              int    `json:"-"`
 	Clid             int    `json:"clid"`
-	ClientDatabaseId int    `json:"-"`
+	ClientDatabaseID int    `json:"-"`
 	ClientNickname   string `json:"client_nickname"`
 	ClientType       int    `json:"-"`
 }
@@ -20,7 +20,7 @@ func NewClient(cmap map[string]string) Client {
 
 	newC.Cid, _ = strconv.Atoi(cmap["cid"])
 	newC.Clid, _ = strconv.Atoi(cmap["clid"])
-	newC.ClientDatabaseId, _ = strconv.Atoi(cmap["client_database_id"])
+	newC.ClientDatabaseID, _ = strconv.Atoi(cmap["client_database_id"])
 	newC.ClientNickname = cmap["client_nickname"]
 	newC.ClientType, _ = strconv.Atoi(cmap["client_type"])
 
