@@ -11,7 +11,7 @@ type Client struct {
 	Clid             int    `json:"clid"`
 	ClientDatabaseID int    `json:"-"`
 	ClientNickname   string `json:"client_nickname"`
-	ClientType       int    `json:"-"`
+	ClientType       int    `json:"client_type"`
 }
 
 //NewClient creates a Client datastructure from a map of strings
