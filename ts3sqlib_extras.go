@@ -71,19 +71,42 @@ func MsgToMaps(msg string) (parts []map[string]string, err error) {
 	parts = make([]map[string]string, len(lines))
 
 	for i := range lines {
-		parts[i] = make(map[string]string)
-
-		lines[i] = strings.Replace(lines[i], "\n", "", -1)
-		pairs := strings.Split(lines[i], " ")
-
-		for j := range pairs {
-			pair := strings.Split(pairs[j], "=")
-			if len(pair) != 2 {
-				continue
-			}
-			parts[i][pair[0]] = Unescape(pair[1])
+		parts[i], err = MsgToMap(lines[i])
+		if err != nil {
+			return
 		}
 	}
+
+	return
+}
+
+//MsgToMap converts a given ts3 serverquery answer into a map of
+//key-value-pairs seperated by a '='.
+func MsgToMap(msg string) (part map[string]string, err error) {
+	part = make(map[string]string)
+
+	msg = strings.Replace(msg, "\n", "", -1)
+	pairs := strings.Split(msg, " ")
+
+	for j := range pairs {
+		pair := strings.Split(pairs[j], "=")
+		if len(pair) != 2 {
+			continue
+		}
+		part[pair[0]] = Unescape(pair[1])
+	}
+
+	return
+}
+
+//SendToMap combines a Send and a MsgToMap.
+func (c *SqConn) SendToMap(msg string) (pairs map[string]string, err error) {
+	answer, err := c.Send(msg)
+	if err != nil {
+		return
+	}
+
+	pairs, err = MsgToMap(answer)
 
 	return
 }
