@@ -110,3 +110,15 @@ func (c *SqConn) SendToMap(msg string) (pairs map[string]string, err error) {
 
 	return
 }
+
+//SendToMaps combines a Send and a MsgToMaps.
+func (c *SqConn) SendToMaps(msg string) (parts []map[string]string, err error) {
+	answer, err := c.Send(msg)
+	if err != nil {
+		return
+	}
+
+	parts, err = MsgToMaps(answer)
+
+	return
+}
