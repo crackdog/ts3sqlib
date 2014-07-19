@@ -24,13 +24,14 @@ var (
 
 //SqConn contains the connection to a ts3 server.
 type SqConn struct {
-	conn       net.Conn
-	logger     *log.Logger
-	sendMutex  *sync.Mutex
-	receiving  bool
-	recvNotify chan string
-	recvChan   chan string
-	closed     chan bool
+	conn           net.Conn
+	logger         *log.Logger
+	sendMutex      *sync.Mutex
+	receiving      bool
+	recvNotify     chan string
+	notifyChannels []chan string
+	recvChan       chan string
+	closed         chan bool
 	//WelcomeMsg contains the welcome message from the ts3 server
 	WelcomeMsg string
 }
@@ -51,14 +52,15 @@ func Dial(address string, logger *log.Logger) (conn *SqConn, err error) {
 	}
 
 	conn = &SqConn{
-		conn:       connection,
-		logger:     logger,
-		sendMutex:  &sync.Mutex{},
-		receiving:  true,
-		recvNotify: make(chan string),
-		recvChan:   make(chan string),
-		closed:     make(chan bool),
-		WelcomeMsg: "",
+		conn:           connection,
+		logger:         logger,
+		sendMutex:      &sync.Mutex{},
+		receiving:      true,
+		recvNotify:     make(chan string),
+		notifyChannels: make([]chan string, 0),
+		recvChan:       make(chan string),
+		closed:         make(chan bool),
+		WelcomeMsg:     "",
 	}
 
 	go conn.recv() //goroutine that splits the incoming messages into notify
@@ -104,6 +106,10 @@ func (c *SqConn) recv() {
 		//decide if its notify or not and put it to the correct channel
 		if strings.HasPrefix(line, "notify") {
 			c.recvNotify <- line
+			//send to notifyChannels
+			for _, nc := range c.notifyChannels {
+				nc <- line
+			}
 		} else {
 			c.recvChan <- line
 		}
@@ -117,6 +123,14 @@ func (c *SqConn) RecvNotify() (answer string, err error) {
 
 	answer = <-c.recvNotify
 	return
+}
+
+func (c *SqConn) Notify() <-chan string {
+	s := make(chan string)
+	//adding s to notify channels
+	c.notifyChannels = append(c.notifyChannels, s)
+
+	return s
 }
 
 //Close closes the connection to the ts3 server.
