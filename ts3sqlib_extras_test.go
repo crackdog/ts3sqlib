@@ -19,7 +19,7 @@ func TestMsgToMaps(t *testing.T) {
 	xs, err := MsgToMaps(testmsg)
 
 	if err != nil {
-		t.Errorf("MsgToMaps(%s) gives error: '%s'", err.Error())
+		t.Errorf("MsgToMaps(%s) gives error: '%s'", testmsg, err.Error())
 	} else {
 		for i, x := range xs {
 			if i < len(testmap) {
