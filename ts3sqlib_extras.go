@@ -1,17 +1,19 @@
 package ts3sqlib
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
 
 //Client hold all information for a client from the clientlist command.
 type Client struct {
-	Cid              int    `json:"-"`
-	Clid             int    `json:"clid"`
-	ClientDatabaseID int    `json:"-"`
-	ClientNickname   string `json:"client_nickname"`
-	ClientType       int    `json:"client_type"`
+	Cid                     int    `json:"-"`
+	Clid                    int    `json:"clid"`
+	ClientDatabaseID        int    `json:"-"`
+	ClientNickname          string `json:"client_nickname"`
+	ClientType              int    `json:"client_type"`
+	ConnectionConnectedTime int    `json:"connection_connected_time"`
 }
 
 //NewClient creates a Client datastructure from a map of strings
@@ -23,6 +25,8 @@ func NewClient(cmap map[string]string) Client {
 	newC.ClientDatabaseID, _ = strconv.Atoi(cmap["client_database_id"])
 	newC.ClientNickname = cmap["client_nickname"]
 	newC.ClientType, _ = strconv.Atoi(cmap["client_type"])
+
+	newC.ConnectionConnectedTime = 0
 
 	return newC
 }
@@ -121,4 +125,18 @@ func (c *SqConn) SendToMaps(msg string) (parts []map[string]string, err error) {
 	parts, err = MsgToMaps(answer)
 
 	return
+}
+
+func (c *SqConn) GetConnectionTimeForCL(clientlist []Client) (clients []Client, err error) {
+	for i := range clientlist {
+		msg := fmt.Sprint("clientinfo clid=", clients[i].Clid)
+		answer, err := c.SendToMap(msg)
+		if err != nil {
+			break
+		}
+		fmt.Println(msg)
+		s := answer["connection_connected_time"]
+		clients[i].ConnectionConnectedTime, _ = strconv.Atoi(s)
+	}
+	return clientlist, err
 }
