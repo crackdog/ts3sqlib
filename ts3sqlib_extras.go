@@ -129,14 +129,13 @@ func (c *SqConn) SendToMaps(msg string) (parts []map[string]string, err error) {
 
 func (c *SqConn) GetConnectionTimeForCL(clientlist []Client) (clients []Client, err error) {
 	for i := range clientlist {
-		msg := fmt.Sprint("clientinfo clid=", clients[i].Clid)
+		msg := fmt.Sprint("clientinfo clid=", clientlist[i].Clid)
 		answer, err := c.SendToMap(msg)
 		if err != nil {
 			break
 		}
-		fmt.Println(msg)
 		s := answer["connection_connected_time"]
-		clients[i].ConnectionConnectedTime, _ = strconv.Atoi(s)
+		clientlist[i].ConnectionConnectedTime, _ = strconv.Atoi(s)
 	}
 	return clientlist, err
 }
